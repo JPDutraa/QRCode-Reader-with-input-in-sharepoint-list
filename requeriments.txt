@@ -1,0 +1,3 @@
+opencv-python
+pyzbar
+Office365-REST-Python-Client
