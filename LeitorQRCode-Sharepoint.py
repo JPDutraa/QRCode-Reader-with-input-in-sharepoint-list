@@ -5,6 +5,17 @@ from office365.sharepoint.client_context import ClientContext
 from office365.sharepoint.lists.list import ListItem
 import winsound
 import time
+import logging
+
+
+# Configuração do logger
+
+log_file = "log.txt"
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    handlers=[logging.FileHandler(log_file), logging.StreamHandler()])
+logger = logging.getLogger(__name__)
 
 
 # Define as credenciais de acesso ao SharePoint
@@ -25,7 +36,7 @@ cap = cv2.VideoCapture(stream_url)
 
 # Verifica se a transmissão foi capturada com sucesso
 if not cap.isOpened():
-    print("Erro ao capturar transmissão ao vivo")
+    logger.error("Erro ao capturar transmissão ao vivo")
     exit()
 
 # Loop para capturar e processar frames da transmissão
@@ -35,7 +46,7 @@ last_barcode_time = 0  # Inicializa a última vez que um QR code foi lido
 while True:
     ret, frame = cap.read()
     if not ret:
-        print("Erro ao capturar frame da transmissão")
+        logger.error("Erro ao capturar frame da transmissão")
         break
 
     # Converte a imagem capturada para tons de cinza
@@ -51,7 +62,7 @@ while True:
         if current_time - last_barcode_time >= min_time_interval:
              # Tempo suficiente passou desde a última leitura de QR code
             last_barcode_time = current_time # Atualiza o tempo da última leitura
-            print(f"QRCode lido: {barcode_data}")
+            logger.error(f"QRCode lido: {barcode_data}")
             barcode_data_split = barcode_data.split(";")
             barcode_data_strip_0 = barcode_data_split[0].strip()
             barcode_data_strip_1 = barcode_data_split[1].strip()
@@ -69,7 +80,7 @@ while True:
                 'PROCESSO': barcode_data_strip_3
             })
             ctx.execute_query()
-            print(f"Item adicionado na lista {list_name} com sucesso!")
+            logger.error(f"Item adicionado na lista {list_name} com sucesso!")
 
             # Toca um som para indicar que um QR code foi lido
             winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
