@@ -1,0 +1,3 @@
+opencv-python==4.5.4.60
+pyzbar==0.1.8
+Office365-REST-Python-Client==2.3.6
